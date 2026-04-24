@@ -37,7 +37,11 @@ class TagEditorDialog extends Application {
         }
     });
 
-    const unifiedTags = Array.from(allTagsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    const unifiedTags = Array.from(allTagsMap.values()).sort((a, b) => {
+        if (a.isLocked && !b.isLocked) return -1;
+        if (!a.isLocked && b.isLocked) return 1;
+        return a.name.localeCompare(b.name);
+    });
     
     return {
       multipleActors: multiple,
