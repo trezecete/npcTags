@@ -103,11 +103,6 @@ class TagEditorDialog extends Application {
       this._onRemoveTag(event);
     });
 
-    // Clear all tags
-    html.find(".clear-all-btn").on("click", (event) => {
-      this._onClearAll(event);
-    });
-
     // Toggle Show All
     html.find(".toggle-show-all").on("click", (event) => {
         this.showAll = !this.showAll;
@@ -168,21 +163,6 @@ class TagEditorDialog extends Application {
     this.render();
   }
 
-  async _onClearAll(event) {
-    const confirm = await Dialog.confirm({
-      title: game.i18n.localize("npc-tags.dialog.clearConfirmTitle"),
-      content: `<p>${game.i18n.localize("npc-tags.dialog.clearConfirmContent")}</p>`,
-      yes: () => true,
-      no: () => false,
-      defaultYes: false
-    });
-
-    if (confirm) {
-      for (const actor of this.actors) {
-        await setTagsOnActors([actor], "");
-      }
-      this.render();
-    }
   }
 }
 
