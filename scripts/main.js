@@ -74,8 +74,8 @@ class TagEditorDialog extends Dialog {
             : game.i18n.localize("npc-tags.dialog.save"),
           icon: '<i class="fas fa-check"></i>',
           callback: async (html) => {
-            const input = html.querySelector('input[name="tagsInput"]');
-            const tagsInput = input?.value || "";
+            const input = html.find('input[name="tagsInput"]');
+            const tagsInput = input?.val() || "";
             await setTagsOnActors(actors, tagsInput);
           }
         },
@@ -103,16 +103,14 @@ class TagEditorDialog extends Dialog {
 
   activateListeners(html) {
     super.activateListeners(html);
-    const removeButtons = html.querySelectorAll(".tag-remove");
-    removeButtons.forEach(btn => {
-      btn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const tag = e.target.closest(".tag").dataset.tag;
-        for (const actor of this.actors) {
-          await removeTagFromActor(actor, tag);
-        }
-        this.render(true);
-      });
+    const removeButtons = html.find(".tag-remove");
+    removeButtons.on("click", async (e) => {
+      e.preventDefault();
+      const tag = $(e.currentTarget).closest(".tag").data("tag");
+      for (const actor of this.actors) {
+        await removeTagFromActor(actor, tag);
+      }
+      this.render(true);
     });
   }
 }
