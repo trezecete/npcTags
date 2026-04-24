@@ -37,8 +37,8 @@ class TagEditorDialog extends Application {
         
         normalTags = this.showAll ? allTags : commonTags;
         
-        // Locked tags union
-        lockedTags = getLockedTagsFromActors(this.actors);
+        // Only show locked tags in multi-select if showAll is active
+        lockedTags = this.showAll ? getLockedTagsFromActors(this.actors) : [];
     } else {
         normalTags = getTagsFromActors(this.actors);
         lockedTags = getLockedTagsFromActors(this.actors);
