@@ -36,15 +36,20 @@ Hooks.once("init", () => {
 
   // Register Hooks
   registerHooks();
+});
 
-  // Expose API
-  game.modules.get("npc-tags").api = {
+// Setup hook is better for exposing APIs to other modules/macros
+Hooks.once("setup", () => {
+  const api = {
     openTagEditorFromTokens,
     openTagEditorForActor,
     TagTypeConfig
   };
 
-  game.npcTags = game.modules.get("npc-tags").api;
+  game.modules.get("npc-tags").api = api;
+  game.npcTags = api;
+
+  console.log("NPC Tags | API Exposed:", game.npcTags);
 });
 
 Hooks.once("ready", () => {
