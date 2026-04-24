@@ -8,7 +8,7 @@
       "url": "https://github.com/trezecete"
     }
   ],
-  "version": "1.0.7",
+  "version": "1.0.9",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -29,6 +29,6 @@
     "scripts/main.js"
   ],
   "url": "https://github.com/trezecete/npcTags",
-  "manifest": "https://github.com/trezecete/npcTags/releases/latest/download/module.json",
+  "manifest": "https://raw.githubusercontent.com/trezecete/npcTags/master/module.json",
   "download": "https://github.com/trezecete/npcTags/releases/latest/download/npcTags.zip"
 }
