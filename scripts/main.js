@@ -149,33 +149,37 @@ async function openTagEditorForActor(actor) {
 
 console.log("NPC Tags: Loading...");
 
-const moduleData = game.modules.get("npc-tags");
-if (moduleData) {
-  moduleData.api = {
-    openTagEditor: openTagEditorFromTokens,
-    openTagEditorForActor: openTagEditorForActor
+Hooks.on("init", () => {
+  const moduleData = game.modules.get("npc-tags");
+  if (moduleData) {
+    moduleData.api = {
+      openTagEditor: openTagEditorFromTokens,
+      openTagEditorForActor: openTagEditorForActor
+    };
+  }
+  
+  game.npcTags = {
+    openTagEditorFromTokens,
+    openTagEditorForActor
   };
-}
 
-game.npcTags = {
-  openTagEditorAPI: openTagEditorFromTokens,
-  openTagEditorForActor: openTagEditorForActor
-};
+  console.log("NPC Tags: API ready");
+
+  Hooks.on("ActorsDirectoryContextMenu", (html, actors) => {
+    actors.push({
+      name: game.i18n.localize("npc-tags.contextMenu.editTags"),
+      icon: '<i class="fas fa-tag"></i>',
+      callback: (actor) => openTagEditorForActor(actor)
+    });
+  });
+
+  Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
+    buttons.push({
+      label: game.i18n.localize("npc-tags.sheet.editTags"),
+      icon: "fas fa-tag",
+      onclick: () => openTagEditorForActor(sheet.actor)
+    });
+  });
+});
 
 console.log("NPC Tags loaded");
-
-Hooks.on("ActorsDirectoryContextMenu", (html, actors) => {
-  actors.push({
-    name: game.i18n.localize("npc-tags.contextMenu.editTags"),
-    icon: '<i class="fas fa-tag"></i>',
-    callback: (actor) => openTagEditorForActor(actor)
-  });
-});
-
-Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
-  buttons.push({
-    label: game.i18n.localize("npc-tags.sheet.editTags"),
-    icon: "fas fa-tag",
-    onclick: () => openTagEditorForActor(sheet.actor)
-  });
-});
