@@ -95,12 +95,30 @@ export async function setTagsOnActors(actors, tagsInput) {
 }
 
 /**
+ * Retorna as tags "travadas" (ex: baseadas no nome).
+ */
+export function getLockedTags(actor) {
+  if (!actor) return [];
+  // Gera tags baseadas no nome do ator
+  return parseTags(actor.name);
+}
+
+/**
+ * Retorna todas as tags de um ator (normais + travadas).
+ */
+export function getAllActorTags(actor) {
+  const normal = getActorTags(actor);
+  const locked = getLockedTags(actor);
+  return [...new Set([...normal, ...locked])].sort();
+}
+
+/**
  * Retorna todas as tags existentes no mundo.
  */
 export function getAllWorldTags() {
   const allTags = new Set();
   for (const actor of game.actors) {
-    const tags = getActorTags(actor);
+    const tags = getAllActorTags(actor);
     tags.forEach(t => allTags.add(t));
   }
   return [...allTags].sort();

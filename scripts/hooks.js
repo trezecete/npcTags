@@ -1,5 +1,5 @@
 import { openTagEditorForActor } from "./api.js";
-import { getActorTags } from "./tags.js";
+import { getAllActorTags } from "./tags.js";
 
 export function registerHooks() {
   // Add context menu option
@@ -34,7 +34,7 @@ export function registerHooks() {
       const actor = game.actors.get(actorId);
       if (!actor) return;
 
-      const tags = getActorTags(actor);
+      const tags = getAllActorTags(actor);
       if (tags.length === 0) return;
 
       // Inject hidden tags into the document name for searchability

@@ -21,12 +21,24 @@ class TagEditorDialog extends Application {
 
   async getData() {
     const multiple = this.actors.length > 1;
-    const allTags = getTagsFromActors(this.actors);
+    const normalTags = getTagsFromActors(this.actors);
+    
+    // For locked tags, we show the intersection of locked tags if multiple, 
+    // or just the locked tags of the single actor
+    let lockedTags = [];
+    if (!multiple) {
+        const { getLockedTags } = await import("./tags.js");
+        lockedTags = getLockedTags(this.actors[0]);
+    } else {
+        // For multiple, we could show a message or just empty for now 
+        // as locked tags (names) are unique to each actor
+    }
     
     return {
       multipleActors: multiple,
       actorCount: this.actors.length,
-      tagsList: allTags,
+      tagsList: normalTags,
+      lockedTags: lockedTags,
       isSingle: !multiple,
       actorName: multiple ? "" : this.actors[0].name
     };

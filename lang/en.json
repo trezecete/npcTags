@@ -12,6 +12,8 @@
   "npc-tags.dialog.clearAll": "Clear All Tags",
   "npc-tags.dialog.clearConfirmTitle": "Confirm Clear",
   "npc-tags.dialog.clearConfirmContent": "Are you sure you want to remove ALL tags from the selected actors?",
+  "npc-tags.dialog.lockedTags": "Locked Tags (Automatic)",
+  "npc-tags.dialog.lockedTooltip": "This tag is automatically generated and cannot be removed.",
   "npc-tags.dialog.multipleSelected": "{count} actors selected",
   "npc-tags.contextMenu.editTags": "Edit Tags...",
   "npc-tags.sheet.editTags": "Tags",

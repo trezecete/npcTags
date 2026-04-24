@@ -103,6 +103,26 @@
   color: var(--npc-tag-accent);
 }
 
+/* Locked Tags Styling */
+.tags-container.locked {
+  background: rgba(0, 0, 0, 0.05);
+  border-style: solid;
+}
+
+.tag.locked {
+  background: #dfe6e9;
+  border-color: #b2bec3;
+  color: #636e72;
+  cursor: default;
+}
+
+.tag.locked:hover {
+  background: #dfe6e9;
+  border-color: #b2bec3;
+  color: #636e72;
+  transform: none;
+}
+
 .tag-remove {
   cursor: pointer;
   color: #999;
