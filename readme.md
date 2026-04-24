@@ -15,14 +15,14 @@ Módulo para Foundry VTT v13+ que permite adicionar palavras-chave (tags) aos ac
 
 Crie uma macro com o seguinte código:
 ```javascript
-await game.npcTags.openTagEditorAPI();
+await openNPCTagsEditor();
 ```
 
 Coloque a macro na barra de macros. Ao executar, selecione tokens na scene primeiro - o sistema detectará os actors vinculados.
 
 ### 2. Menu de Contexto
 
-Clique com botão direito em um actor na lista do sidebar (aba Actors) e selecione "Editar Tags...".
+ Clique com botão direito em um actor na lista do sidebar (aba Actors) e selecione "Editar Tags...".
 
 ### 3. Botão na Sheet
 
@@ -30,17 +30,17 @@ Abra a sheet de um actor e clique no ícone de tag no canto superior direito.
 
 ## Como Usar
 
-###Adicionar Tags
+### Adicionar Tags
 
 1. Selecione tokens na scene (ou use menu contexto/sheet)
 2. Execute a macro ou clique na opção desejada
 3. Digite as tags no campo de texto (separadas por espaço)
 4. Clique em Salvar
 
-**Exemplo**: `carecaanao magico`
-Resulta em: `careca`, `anao`, `magico`
+**Exemplo**: `careca anoao magico`
+Resulta em: `careca`, `anoao`, `magico`
 
-###Normalização
+### Normalização
 
 O sistema converte automaticamente:
 - Minúsculas: `MAO` → `mao`
@@ -49,8 +49,18 @@ O sistema converte automaticamente:
 
 ## Instalação
 
-1. Baixe o módulo
-2. Cole na pasta `modules/npcTags`
+### Via URL (Recomendado)
+
+No Foundry, vá em **Game Settings** → **Configure Game** → **Manage Modules** → **Install Module** → **Install from URL**:
+
+```
+https://raw.githubusercontent.com/trezecete/npcTags/master/module.json
+```
+
+### Via Download
+
+1. Baixe o módulo: https://github.com/trezecete/npcTags/archive/master.zip
+2. Extraia para `Data/modules/npcTags`
 3. Ative o módulo no gerenciamento de módulos do Foundry
 
 ## Busca por Tags (Em Desenvolvimento)
