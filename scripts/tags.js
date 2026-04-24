@@ -104,6 +104,20 @@ export function getLockedTags(actor) {
 }
 
 /**
+ * Retorna as tags "travadas" de um grupo de atores (União).
+ */
+export function getLockedTagsFromActors(actors) {
+  const allLocked = new Set();
+  for (const actor of actors) {
+    const locked = getLockedTags(actor);
+    for (const tag of locked) {
+      allLocked.add(tag);
+    }
+  }
+  return [...allLocked].sort();
+}
+
+/**
  * Retorna todas as tags de um ator (normais + travadas).
  */
 export function getAllActorTags(actor) {

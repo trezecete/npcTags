@@ -19,9 +19,12 @@
     <label><i class="fas fa-tags"></i> {{ localize "npc-tags.dialog.currentTags" }} ({{ tagsList.length }})</label>
     <div class="tags-container">
       {{#each tagsList}}
-      <span class="tag" data-tag="{{this}}">
-        <span class="tag-text">{{this}}</span>
-        <span class="tag-remove" title="{{ localize "npc-tags.dialog.removeTag" }}">&times;</span>
+      <span class="tag {{#if this.isLocked}}locked{{/if}}" data-tag="{{this.name}}" {{#if this.isLocked}}title="{{ localize 'npc-tags.dialog.lockedTooltip' }}"{{/if}}>
+        {{#if this.isLocked}}<i class="fas fa-lock" style="font-size: 0.7rem; opacity: 0.6;"></i>{{/if}}
+        <span class="tag-text">{{this.name}}</span>
+        {{#unless this.isLocked}}
+        <span class="tag-remove" title="{{ localize 'npc-tags.dialog.removeTag' }}">&times;</span>
+        {{/unless}}
       </span>
       {{/each}}
       {{#unless tagsList}}
@@ -29,20 +32,6 @@
       {{/unless}}
     </div>
   </div>
-
-  {{#if lockedTags}}
-  <div class="form-group">
-    <label><i class="fas fa-lock"></i> {{ localize "npc-tags.dialog.lockedTags" }}</label>
-    <div class="tags-container locked">
-      {{#each lockedTags}}
-      <span class="tag locked" title="{{ localize "npc-tags.dialog.lockedTooltip" }}">
-        <i class="fas fa-lock" style="font-size: 0.7rem; opacity: 0.6;"></i>
-        <span class="tag-text">{{this}}</span>
-      </span>
-      {{/each}}
-    </div>
-  </div>
-  {{/if}}
 
   <div class="tag-controls">
     <button class="clear-all-btn">
