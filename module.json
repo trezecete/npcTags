@@ -25,8 +25,11 @@
       "path": "lang/pt-BR.json"
     }
   ],
-  "scripts": [
+  "esmodules": [
     "scripts/main.js"
+  ],
+  "styles": [
+    "styles/npc-tags.css"
   ],
   "url": "https://github.com/trezecete/npcTags",
   "manifest": "https://raw.githubusercontent.com/trezecete/npcTags/master/module.json",

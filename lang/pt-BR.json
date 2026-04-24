@@ -9,9 +9,12 @@
   "npc-tags.dialog.save": "Salvar",
   "npc-tags.dialog.applyAll": "Aplicar a Todos",
   "npc-tags.dialog.cancel": "Cancelar",
-  "npc-tags.dialog.multipleSelected": "{count} actors selecionados",
+  "npc-tags.dialog.clearAll": "Limpar Todas as Tags",
+  "npc-tags.dialog.clearConfirmTitle": "Confirmar Limpeza",
+  "npc-tags.dialog.clearConfirmContent": "Você tem certeza que deseja remover TODAS as tags dos atores selecionados?",
+  "npc-tags.dialog.multipleSelected": "{count} atores selecionados",
   "npc-tags.contextMenu.editTags": "Editar Tags...",
   "npc-tags.sheet.editTags": "Tags",
-  "npc-tags.notifications.noTokensSelected": "Nenhum token selecionado. Selecione tokens na scene primeiro.",
-  "npc-tags.notifications.noActorFound": "Nenhum actor encontrado para os tokens selecionados."
+  "npc-tags.notifications.noTokensSelected": "Nenhum token selecionado. Selecione tokens na cena primeiro.",
+  "npc-tags.notifications.noActorFound": "Nenhum ator encontrado para os tokens selecionados."
 }

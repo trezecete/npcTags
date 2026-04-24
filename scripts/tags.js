@@ -1,7 +1,12 @@
 const FLAG_SCOPE = "npc-tags";
 const FLAG_KEY = "tags";
 
+/**
+ * Normaliza uma string para ser usada como tag.
+ * Remove acentos, caracteres especiais e converte para minúsculas.
+ */
 export function normalizeTag(input) {
+  if (!input) return "";
   return input
     .toLowerCase()
     .normalize("NFD")
@@ -10,32 +15,54 @@ export function normalizeTag(input) {
     .trim();
 }
 
+/**
+ * Converte uma string de entrada em um array de tags únicas e normalizadas.
+ */
 export function parseTags(input) {
-  const rawTags = input.split(/\s+/).filter(t => t.length > 0);
+  if (!input) return [];
+  // Divide por espaços ou vírgulas
+  const rawTags = input.split(/[\s,]+/).filter(t => t.length > 0);
   const normalizedTags = rawTags.map(normalizeTag).filter(t => t.length > 0);
   return [...new Set(normalizedTags)];
 }
 
+/**
+ * Retorna as tags de um ator.
+ */
 export function getActorTags(actor) {
+  if (!actor) return [];
   return actor.getFlag(FLAG_SCOPE, FLAG_KEY) || [];
 }
 
+/**
+ * Define as tags de um ator, removendo duplicatas e limpando o flag se estiver vazio.
+ */
 export async function setActorTags(actor, tags) {
-  const cleanTags = [...new Set(tags)];
+  if (!actor) return;
+  const cleanTags = [...new Set(tags.map(normalizeTag))].filter(t => t.length > 0).sort();
+  
   if (cleanTags.length === 0) {
     await actor.unsetFlag(FLAG_SCOPE, FLAG_KEY);
   } else {
     await actor.setFlag(FLAG_SCOPE, FLAG_KEY, cleanTags);
   }
+  
+  // Trigger directory re-render to update search index
+  ui.actors.render();
 }
 
+/**
+ * Adiciona novas tags a um ator sem remover as existentes.
+ */
 export async function addTagsToActor(actor, newTagsInput) {
   const currentTags = getActorTags(actor);
   const newTags = parseTags(newTagsInput);
-  const allTags = [...new Set([...currentTags, ...newTags])];
-  await setActorTags(actor, allTags);
+  await setActorTags(actor, [...currentTags, ...newTags]);
 }
 
+/**
+ * Remove uma tag específica de um ator.
+ */
 export async function removeTagFromActor(actor, tagToRemove) {
   const currentTags = getActorTags(actor);
   const normalized = normalizeTag(tagToRemove);
@@ -43,6 +70,9 @@ export async function removeTagFromActor(actor, tagToRemove) {
   await setActorTags(actor, filtered);
 }
 
+/**
+ * Retorna todas as tags únicas de um grupo de atores.
+ */
 export function getTagsFromActors(actors) {
   const allTags = new Set();
   for (const actor of actors) {
@@ -54,9 +84,24 @@ export function getTagsFromActors(actors) {
   return [...allTags].sort();
 }
 
+/**
+ * Define as mesmas tags para todos os atores selecionados (Sobrescreve).
+ */
 export async function setTagsOnActors(actors, tagsInput) {
   const newTags = parseTags(tagsInput);
   for (const actor of actors) {
     await setActorTags(actor, newTags);
   }
+}
+
+/**
+ * Retorna todas as tags existentes no mundo.
+ */
+export function getAllWorldTags() {
+  const allTags = new Set();
+  for (const actor of game.actors) {
+    const tags = getActorTags(actor);
+    tags.forEach(t => allTags.add(t));
+  }
+  return [...allTags].sort();
 }

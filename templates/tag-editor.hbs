@@ -1,14 +1,22 @@
-<div class="form-group">
+<div class="npc-tags-editor-content">
   {{#if multipleActors}}
   <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
+  {{else}}
+  <p class="notes">{{actorName}}</p>
   {{/if}}
-  
-  <label>{{ localize "npc-tags.dialog.tagsLabel" }}</label>
-  <input type="text" name="tagsInput" value="{{tagsValue}}" placeholder="{{ localize "npc-tags.dialog.placeholder" }}" />
-  
-  <div class="existing-tags">
-    <label>{{ localize "npc-tags.dialog.currentTags" }} ({{ tagsList.length }})</label>
-    {{#if tagsList}}
+
+  <div class="form-group">
+    <label><i class="fas fa-plus-circle"></i> {{ localize "npc-tags.dialog.tagsLabel" }}</label>
+    <div class="input-wrapper" style="display: flex; gap: 8px;">
+      <input type="text" name="tagsInput" placeholder="{{ localize "npc-tags.dialog.placeholder" }}" autofocus />
+      <button class="add-tag-btn" title="{{ localize "npc-tags.dialog.save" }}" style="flex: 0 0 50px;">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label><i class="fas fa-tags"></i> {{ localize "npc-tags.dialog.currentTags" }} ({{ tagsList.length }})</label>
     <div class="tags-container">
       {{#each tagsList}}
       <span class="tag" data-tag="{{this}}">
@@ -16,9 +24,15 @@
         <span class="tag-remove" title="{{ localize "npc-tags.dialog.removeTag" }}">&times;</span>
       </span>
       {{/each}}
+      {{#unless tagsList}}
+      <p class="no-tags">{{ localize "npc-tags.dialog.noTags" }}</p>
+      {{/unless}}
     </div>
-    {{else}}
-    <p class="no-tags">{{ localize "npc-tags.dialog.noTags" }}</p>
-    {{/if}}
+  </div>
+
+  <div class="tag-controls">
+    <button class="clear-all-btn">
+      <i class="fas fa-trash"></i> {{ localize "npc-tags.dialog.clearAll" }}
+    </button>
   </div>
 </div>
