@@ -1,3 +1,5 @@
+import { setTagType } from "./tags.js";
+
 export class TagTypeConfig extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -5,9 +7,10 @@ export class TagTypeConfig extends FormApplication {
       title: game.i18n.localize("npc-tags.settings.tagTypeMenu.name"),
       template: "modules/npc-tags/templates/tag-type-config.hbs",
       width: 500,
-      height: "auto",
+      height: 600,
+      resizable: true,
       closeOnSubmit: true,
-      classes: ["npc-tags-dialog", "tag-type-config"]
+      classes: ["npc-tags-dialog", "tag-type-config-app"]
     });
   }
 
@@ -15,7 +18,6 @@ export class TagTypeConfig extends FormApplication {
     const types = game.settings.get("npc-tags", "tagTypes");
     const mapping = game.settings.get("npc-tags", "tagMapping");
     
-    // Group tags by type
     const tagsByType = {};
     Object.entries(mapping).forEach(([tag, typeId]) => {
       if (!tagsByType[typeId]) tagsByType[typeId] = [];
@@ -25,7 +27,7 @@ export class TagTypeConfig extends FormApplication {
     return {
       types: types.map(t => ({
         ...t,
-        tags: (tagsByType[t.id] || []).join(", ")
+        tagObjects: (tagsByType[t.id] || []).sort()
       }))
     };
   }
@@ -33,8 +35,9 @@ export class TagTypeConfig extends FormApplication {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".add-type").click(this._onAddType.bind(this));
-    html.find(".delete-type").click(this._onDeleteType.bind(this));
+    html.find(".add-type-btn").click(this._onAddType.bind(this));
+    html.find(".delete-type-btn").click(this._onDeleteType.bind(this));
+    html.find(".remove-tag-from-type").click(this._onRemoveTagFromType.bind(this));
   }
 
   async _onAddType(event) {
@@ -53,18 +56,24 @@ export class TagTypeConfig extends FormApplication {
   async _onDeleteType(event) {
     event.preventDefault();
     const typeId = event.currentTarget.closest(".type-row").dataset.typeId;
-    if (typeId === "default") return ui.notifications.warn("Não é possível deletar o tipo padrão.");
+    if (typeId === "default") return;
 
     const types = game.settings.get("npc-tags", "tagTypes").filter(t => t.id !== typeId);
     await game.settings.set("npc-tags", "tagTypes", types);
 
-    // Update mapping to remove deleted type
     const mapping = game.settings.get("npc-tags", "tagMapping");
     Object.keys(mapping).forEach(tag => {
       if (mapping[tag] === typeId) delete mapping[tag];
     });
     await game.settings.set("npc-tags", "tagMapping", mapping);
 
+    this.render();
+  }
+
+  async _onRemoveTagFromType(event) {
+    event.preventDefault();
+    const tag = event.currentTarget.dataset.tag;
+    await setTagType(tag, "default");
     this.render();
   }
 

@@ -191,52 +191,117 @@
 }
 
 /* Tag Type Config Menu */
-.tag-type-config .type-row {
+.tag-type-config-app .type-row {
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.tag-type-config .type-fields {
+.tag-type-config-app .type-header {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.tag-type-config .type-fields input[type="text"] {
+.tag-type-config-app .type-name-input {
   flex: 1;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
-.tag-type-config .type-fields input[type="color"] {
-  width: 40px;
+.tag-type-config-app .type-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-type-config-app .type-actions input[type="color"] {
+  width: 32px;
   height: 32px;
-  padding: 0;
-  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.tag-type-config-app .delete-type-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0 5px;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
-.tag-type-config .type-tags-preview {
-  color: #777;
+.tag-type-config-app .delete-type-btn:hover {
+  color: #e74c3c;
+  box-shadow: none;
+}
+
+.tag-type-config-app .type-tags-container {
   border-top: 1px solid #eee;
-  padding-top: 5px;
+  padding-top: 10px;
 }
 
-.tag-type-config .form-footer {
+.tag-type-config-app .type-tags-container label {
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.tag-type-config-app .type-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag-type-config-app .tag-pill {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.tag-type-config-app .remove-tag-from-type {
+  cursor: pointer;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.tag-type-config-app .remove-tag-from-type:hover {
+  opacity: 1;
+}
+
+.tag-type-config-app .no-tags-hint {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: #bbb;
+}
+
+.tag-type-config-app .form-footer {
   display: flex;
   gap: 10px;
   margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  background: var(--npc-tag-bg-dialog);
+  padding-top: 10px;
 }
 
-.tag-type-config .add-type {
+.tag-type-config-app .add-type-btn {
   background: #2ecc71;
   color: white;
   border: none;
 }
 
-.tag-type-config .add-type:hover {
+.tag-type-config-app .add-type-btn:hover {
   background: #27ae60;
 }

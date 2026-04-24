@@ -4,24 +4,36 @@
   <div class="types-list">
     {{#each types}}
     <div class="type-row" data-type-id="{{this.id}}">
-      <div class="type-fields">
-        <input type="text" name="label.{{this.id}}" value="{{this.label}}" placeholder="Nome do Tipo" />
-        <input type="color" name="color.{{this.id}}" value="{{this.color}}" />
-        {{#if (ne this.id "default")}}
-        <button type="button" class="delete-type" title="Deletar"><i class="fas fa-trash"></i></button>
-        {{else}}
-        <div style="width: 32px;"></div>
-        {{/if}}
+      <div class="type-header">
+        <input type="text" name="label.{{this.id}}" value="{{this.label}}" placeholder="Nome do Tipo" class="type-name-input" />
+        <div class="type-actions">
+          <input type="color" name="color.{{this.id}}" value="{{this.color}}" title="Mudar Cor" />
+          {{#if (ne this.id "default")}}
+          <button type="button" class="delete-type-btn" title="Remover Tipo">&times;</button>
+          {{/if}}
+        </div>
       </div>
-      <div class="type-tags-preview">
-        <small><strong>Tags:</strong> {{#if this.tags}}{{this.tags}}{{else}}Nenhuma{{/if}}</small>
+      
+      <div class="type-tags-container">
+        <label>Tags Associadas:</label>
+        <div class="type-tags-list">
+          {{#each this.tagObjects}}
+          <span class="tag-pill" style="background-color: {{../this.color}}">
+            <span class="tag-text">{{this}}</span>
+            <span class="remove-tag-from-type" data-tag="{{this}}" title="Remover desta categoria">&times;</span>
+          </span>
+          {{/each}}
+          {{#unless this.tagObjects}}
+          <span class="no-tags-hint">Nenhuma tag associada</span>
+          {{/unless}}
+        </div>
       </div>
     </div>
     {{/each}}
   </div>
 
   <div class="form-footer">
-    <button type="button" class="add-type"><i class="fas fa-plus"></i> Adicionar Tipo</button>
-    <button type="submit" name="submit"><i class="fas fa-save"></i> Salvar Configurações</button>
+    <button type="button" class="add-type-btn"><i class="fas fa-plus"></i> Novo Tipo</button>
+    <button type="submit" name="submit"><i class="fas fa-save"></i> Salvar</button>
   </div>
 </form>
