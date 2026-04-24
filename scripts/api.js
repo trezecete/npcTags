@@ -60,9 +60,15 @@ class TagEditorDialog extends Application {
         ...lockedTags.map(t => prepareTag(t, true)),
         ...normalTags.map(t => prepareTag(t, false))
     ].sort((a, b) => {
-        // Sort by Type Label first, then by Name
+        // 1. Locked tags ALWAYS first
+        if (a.isLocked && !b.isLocked) return -1;
+        if (!a.isLocked && b.isLocked) return 1;
+
+        // 2. Sort by Type Label
         const typeComp = a.typeLabel.localeCompare(b.typeLabel);
         if (typeComp !== 0) return typeComp;
+
+        // 3. Sort by Name
         return a.name.localeCompare(b.name);
     });
 
