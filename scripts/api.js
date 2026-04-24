@@ -1,4 +1,4 @@
-import { getTagsFromActors, getLockedTagsFromActors, addTagsToActor, removeTagFromActor, setTagsOnActors, getTagColor, setTagType } from "./tags.js";
+import { getTagsFromActors, getLockedTagsFromActors, addTagsToActor, removeTagFromActor, setTagsOnActors, getTagColor, setTagType, getTagType } from "./tags.js";
 
 const TEMPLATE = "modules/npc-tags/templates/tag-editor.hbs";
 
@@ -22,7 +22,6 @@ class TagEditorDialog extends Application {
 
   async getData() {
     const multiple = this.actors.length > 1;
-    const { getTagsFromActors, getLockedTagsFromActors, getTagColor, getTagType } = await import("./tags.js");
     
     let normalTags = [];
     let lockedTags = [];
