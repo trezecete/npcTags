@@ -6,6 +6,7 @@ class TagEditorDialog extends Application {
   constructor(actors, options = {}) {
     super(options);
     this.actors = actors;
+    this.showAll = false; // Toggle state for multi-select
   }
 
   static get defaultOptions() {
@@ -21,29 +22,82 @@ class TagEditorDialog extends Application {
 
   async getData() {
     const multiple = this.actors.length > 1;
-    const normalTags = getTagsFromActors(this.actors);
-    const lockedTags = getLockedTagsFromActors(this.actors);
+    const { getTagsFromActors, getLockedTagsFromActors, getTagColor, getTagType } = await import("./tags.js");
     
-    // Unify tags into a single sorted list of objects
-    const allTagsMap = new Map();
+    let normalTags = [];
+    let lockedTags = [];
+
+    if (multiple) {
+        // Calculate Intersection (Common Tags)
+        const tagSets = this.actors.map(a => new Set(getTagsFromActors([a])));
+        const commonTags = getTagsFromActors([this.actors[0]]).filter(t => tagSets.every(s => s.has(t)));
+        
+        // Calculate Union (All Tags)
+        const allTags = getTagsFromActors(this.actors);
+        
+        normalTags = this.showAll ? allTags : commonTags;
+        
+        // Locked tags union
+        lockedTags = getLockedTagsFromActors(this.actors);
+    } else {
+        normalTags = getTagsFromActors(this.actors);
+        lockedTags = getLockedTagsFromActors(this.actors);
+    }
     
-    lockedTags.forEach(t => allTagsMap.set(t, { name: t, isLocked: true, color: getTagColor(t) }));
-    normalTags.forEach(t => {
-        if (!allTagsMap.has(t)) {
-            allTagsMap.set(t, { name: t, isLocked: false, color: getTagColor(t) });
-        }
+    // Unify and Group
+    const types = game.settings.get("npc-tags", "tagTypes");
+    const typeMap = new Map(types.map(t => [t.id, t]));
+    
+    const prepareTag = (t, isLocked) => ({
+        name: t,
+        isLocked,
+        color: getTagColor(t),
+        typeId: getTagType(t)
     });
 
-    const unifiedTags = Array.from(allTagsMap.values()).sort((a, b) => {
-        if (a.isLocked && !b.isLocked) return -1;
-        if (!a.isLocked && b.isLocked) return 1;
-        return a.name.localeCompare(b.name);
+    const allTags = [
+        ...lockedTags.map(t => prepareTag(t, true)),
+        ...normalTags.map(t => prepareTag(t, false))
+    ];
+
+    // Group by type
+    const groupsMap = new Map();
+
+    allTags.forEach(tag => {
+        const typeId = tag.typeId || "default";
+        if (!groupsMap.has(typeId)) {
+            const type = typeMap.get(typeId) || { label: "Geral", id: "default", color: null };
+            groupsMap.set(typeId, { 
+                id: typeId, 
+                label: type.label, 
+                color: type.color, 
+                tags: [] 
+            });
+        }
+        groupsMap.get(typeId).tags.push(tag);
     });
-    
+
+    // Convert to array and sort
+    const groups = Array.from(groupsMap.values()).sort((a, b) => {
+        if (a.id === "default") return 1;
+        if (b.id === "default") return -1;
+        return a.label.localeCompare(b.label);
+    });
+
+    // Sort tags within each group
+    groups.forEach(g => {
+        g.tags.sort((a, b) => {
+            if (a.isLocked && !b.isLocked) return -1;
+            if (!a.isLocked && b.isLocked) return 1;
+            return a.name.localeCompare(b.name);
+        });
+    });
+
     return {
       multipleActors: multiple,
       actorCount: this.actors.length,
-      tagsList: unifiedTags,
+      groups: groups,
+      showAll: this.showAll,
       isSingle: !multiple,
       actorName: multiple ? "" : this.actors[0].name
     };
@@ -75,6 +129,12 @@ class TagEditorDialog extends Application {
       this._onClearAll(event);
     });
 
+    // Toggle Show All
+    html.find(".toggle-show-all").on("click", (event) => {
+        this.showAll = !this.showAll;
+        this.render();
+    });
+
     // Right-click context menu for tags
     html.find(".tag").on("contextmenu", (event) => {
       this._onTagContextMenu(event);
@@ -84,7 +144,7 @@ class TagEditorDialog extends Application {
   async _onTagContextMenu(event) {
     event.preventDefault();
     const tagName = event.currentTarget.dataset.tag;
-    const types = game.settings.get("npc-tags", "tagTypes");
+    const types = [...game.settings.get("npc-tags", "tagTypes")].sort((a, b) => a.label.localeCompare(b.label));
 
     const menuItems = types.map(type => ({
       name: type.label,

@@ -4,13 +4,14 @@
   <div class="types-list">
     {{#each types}}
     <div class="type-row" data-type-id="{{this.id}}">
+      {{#if (ne this.id "default")}}
+      <button type="button" class="delete-type-btn absolute" title="Remover Tipo">&times;</button>
+      {{/if}}
+      
       <div class="type-header">
         <input type="text" name="label.{{this.id}}" value="{{this.label}}" placeholder="Nome do Tipo" class="type-name-input" />
         <div class="type-actions">
           <input type="color" name="color.{{this.id}}" value="{{this.color}}" title="Mudar Cor" />
-          {{#if (ne this.id "default")}}
-          <button type="button" class="delete-type-btn" title="Remover Tipo">&times;</button>
-          {{/if}}
         </div>
       </div>
       
@@ -18,7 +19,7 @@
         <label>Tags Associadas:</label>
         <div class="type-tags-list">
           {{#each this.tagObjects}}
-          <span class="tag-pill" style="background-color: {{../this.color}}">
+          <span class="tag-pill" {{#if ../this.color}}style="background-color: {{../this.color}}"{{/if}}>
             <span class="tag-text">{{this}}</span>
             <span class="remove-tag-from-type" data-tag="{{this}}" title="Remover desta categoria">&times;</span>
           </span>

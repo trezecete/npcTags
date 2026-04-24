@@ -1,9 +1,16 @@
 <div class="npc-tags-editor-content">
-  {{#if multipleActors}}
-  <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
-  {{else}}
-  <p class="notes">{{actorName}}</p>
-  {{/if}}
+  <div class="editor-header">
+    {{#if multipleActors}}
+    <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
+    <div class="header-actions">
+        <button class="toggle-show-all {{#if showAll}}active{{/if}}" title="{{#if showAll}}Mostrar apenas tags em comum{{else}}Mostrar todas as tags{{/if}}">
+            <i class="fas fa-layer-group"></i> {{#if showAll}}Tags Individuais{{else}}Apenas Comum{{/if}}
+        </button>
+    </div>
+    {{else}}
+    <p class="notes">{{actorName}}</p>
+    {{/if}}
+  </div>
 
   <div class="form-group">
     <label><i class="fas fa-plus-circle"></i> {{ localize "npc-tags.dialog.tagsLabel" }}</label>
@@ -15,25 +22,35 @@
     </div>
   </div>
 
-  <div class="form-group">
-    <label><i class="fas fa-tags"></i> {{ localize "npc-tags.dialog.currentTags" }} ({{ tagsList.length }})</label>
-    <div class="tags-container">
-      {{#each tagsList}}
-      <span class="tag {{#if this.isLocked}}locked{{/if}}" 
-            data-tag="{{this.name}}" 
-            {{#if this.isLocked}}title="{{ localize 'npc-tags.dialog.lockedTooltip' }}"{{/if}}
-            {{#if this.color}}style="background-color: {{this.color}}; border-color: rgba(0,0,0,0.1);"{{/if}}>
-        {{#if this.isLocked}}<i class="fas fa-lock" style="font-size: 0.7rem; opacity: 0.6;"></i>{{/if}}
-        <span class="tag-text">{{this.name}}</span>
-        {{#unless this.isLocked}}
-        <span class="tag-remove" title="{{ localize 'npc-tags.dialog.removeTag' }}">&times;</span>
-        {{/unless}}
-      </span>
-      {{/each}}
-      {{#unless tagsList}}
-      <p class="no-tags">{{ localize "npc-tags.dialog.noTags" }}</p>
-      {{/unless}}
+  <div class="tags-grouped-container">
+    {{#each groups}}
+    <div class="tag-group" data-type-id="{{this.id}}">
+        <label class="group-label" {{#if this.color}}style="color: {{this.color}}"{{/if}}>
+            {{#if this.color}}<i class="fas fa-circle" style="font-size: 0.6rem; vertical-align: middle;"></i> {{/if}}
+            {{this.label}} ({{this.tags.length}})
+        </label>
+        <div class="tags-container">
+            {{#each this.tags}}
+            <span class="tag {{#if this.isLocked}}locked{{/if}}" 
+                    data-tag="{{this.name}}" 
+                    {{#if this.isLocked}}title="{{ localize 'npc-tags.dialog.lockedTooltip' }}"{{/if}}
+                    {{#if this.color}}style="background-color: {{this.color}}; border-color: rgba(0,0,0,0.1);"{{/if}}>
+                {{#if this.isLocked}}<i class="fas fa-lock" style="font-size: 0.7rem; opacity: 0.6;"></i>{{/if}}
+                <span class="tag-text">{{this.name}}</span>
+                {{#unless this.isLocked}}
+                <span class="tag-remove" title="{{ localize 'npc-tags.dialog.removeTag' }}">&times;</span>
+                {{/unless}}
+            </span>
+            {{/each}}
+        </div>
     </div>
+    {{/each}}
+    
+    {{#unless groups}}
+    <div class="tags-container">
+        <p class="no-tags">{{ localize "npc-tags.dialog.noTags" }}</p>
+    </div>
+    {{/unless}}
   </div>
 
   <div class="tag-controls">

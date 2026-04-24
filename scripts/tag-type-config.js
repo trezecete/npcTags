@@ -42,14 +42,25 @@ export class TagTypeConfig extends FormApplication {
 
   async _onAddType(event) {
     event.preventDefault();
+    
+    // Scrape current form data to avoid losing unsaved changes
+    const formData = new FormDataExtended(this.form).object;
     const types = game.settings.get("npc-tags", "tagTypes");
+    
+    const updatedTypes = types.map(t => ({
+        id: t.id,
+        label: formData[`label.${t.id}`] || t.label,
+        color: formData[`color.${t.id}`] || t.color
+    }));
+
     const newId = foundry.utils.randomID();
-    types.push({
+    updatedTypes.push({
       id: newId,
       label: "Novo Tipo",
       color: "#e0e0e0"
     });
-    await game.settings.set("npc-tags", "tagTypes", types);
+
+    await game.settings.set("npc-tags", "tagTypes", updatedTypes);
     this.render();
   }
 
