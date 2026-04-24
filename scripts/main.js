@@ -3,12 +3,10 @@ import * as API from "./api.js";
 
 console.log("NPC Tags loaded");
 
+globalThis.openNPCTagsEditor = API.openTagEditorAPI;
+
 Hooks.once("init", () => {
   console.log("NPC Tags: Initializing...");
   game.npcTags = API;
-});
-
-Hooks.once("ready", () => {
-  console.log("NPC Tags: Registering hooks...");
   registerHooks();
 });

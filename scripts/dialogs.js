@@ -1,4 +1,4 @@
-import { getActorTags, setActorTags, removeTagFromActor, parseTags, getTagsFromActors, setTagsOnActors } from "./tags.js";
+import { getTagsFromActors, setTagsOnActors, removeTagFromActor } from "./tags.js";
 
 const TEMPLATE = "modules/npc-tags/templates/tag-editor.hbs";
 
@@ -11,11 +11,16 @@ export class TagEditorDialog extends Dialog {
 
     super({
       title: multiple ? game.i18n.localize("npc-tags.dialog.titleMultiple") : game.i18n.localize("npc-tags.dialog.title"),
-      content: "",
+      content: await renderTemplate(TEMPLATE, {
+        multipleActors: multiple,
+        actorCount: actorCount,
+        tagsValue: tagsValue,
+        tagsList: allTags
+      }),
       buttons: {
         save: {
           label: multiple ? game.i18n.localize("npc-tags.dialog.applyAll") : game.i18n.localize("npc-tags.dialog.save"),
-          icon: "<i class=\"fas fa-check\"></i>",
+          icon: '<i class="fas fa-check"></i>',
           callback: async (html) => {
             const input = html.querySelector('input[name="tagsInput"]');
             const tagsInput = input?.value || "";
@@ -24,57 +29,31 @@ export class TagEditorDialog extends Dialog {
         },
         cancel: {
           label: game.i18n.localize("npc-tags.dialog.cancel"),
-          icon: "<i class=\"fas fa-times\"></i>",
-          callback: () => {}
+          icon: '<i class="fas fa-times"></i>'
         }
       },
-      default: "save",
-      close: () => {},
-      render: (html) => {
-        const removeButtons = html.querySelectorAll(".tag-remove");
-        removeButtons.forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const tag = e.target.closest(".tag").dataset.tag;
-            for (const actor of actors) {
-              await removeTagFromActor(actor, tag);
-            }
-            renderDialog();
-          });
-        });
-      }
+      defaultButton: "save"
     }, options);
 
     this.actors = actors;
-    this.multiple = multiple;
-    this.actorCount = actorCount;
-    this.allTags = allTags;
-    this.tagsValue = tagsValue;
-    this._dialog = null;
+    this.relatedTagEditorDialog = null;
   }
 
-  async _renderInner(data) {
-    return renderTemplate(TEMPLATE, {
-      multipleActors: this.multiple,
-      actorCount: this.actorCount,
-      tagsValue: this.tagsValue,
-      tagsList: this.allTags
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    const removeButtons = html.querySelectorAll(".tag-remove");
+    removeButtons.forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const tag = e.target.closest(".tag").dataset.tag;
+        for (const actor of this.actors) {
+          await removeTagFromActor(actor, tag);
+        }
+        this.render(true);
+      });
     });
   }
-
-  async getData() {
-    return {
-      multipleActors: this.multiple,
-      actorCount: this.actorCount,
-      tagsValue: this.tagsValue,
-      tagsList: this.allTags
-    };
-  }
-}
-
-async function renderDialog() {
-  if (this.dialog) await this.dialog.close();
-  this.dialog = new TagEditorDialog(this.actors);
-  await this.dialog.render(true);
 }
 
 export async function openTagEditor(actors) {
@@ -84,5 +63,5 @@ export async function openTagEditor(actors) {
   }
 
   const dialog = new TagEditorDialog(actors);
-  await dialog.render(true);
+  dialog.render(true);
 }

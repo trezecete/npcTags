@@ -26,5 +26,3 @@ export async function openTagEditorAPI() {
 export async function openTagEditorForActor(actor) {
   await openTagEditor([actor]);
 }
-
-export { openTagEditor };
