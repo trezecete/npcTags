@@ -1,12 +1,29 @@
-import { registerHooks } from "./hooks.js";
-import * as API from "./api.js";
+import { openTagEditorAPI, openTagEditorForActor } from "./api.js";
 
-console.log("NPC Tags loaded");
+console.log("NPC Tags: Loading...");
 
-globalThis.openNPCTagsEditor = API.openTagEditorAPI;
+game.npcTags = {
+  openTagEditorAPI: openTagEditorAPI
+};
 
-Hooks.once("init", () => {
-  console.log("NPC Tags: Initializing...");
-  game.npcTags = API;
-  registerHooks();
+console.log("NPC Tags loaded", game.npcTags);
+
+Hooks.on("ActorsDirectoryContextMenu", (html, actors) => {
+  actors.push({
+    name: game.i18n.localize("npc-tags.contextMenu.editTags"),
+    icon: '<i class="fas fa-tag"></i>',
+    callback: (actor) => {
+      openTagEditorForActor(actor);
+    }
+  });
+});
+
+Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
+  buttons.push({
+    label: game.i18n.localize("npc-tags.sheet.editTags"),
+    icon: "fas fa-tag",
+    onclick: (html, sheet) => {
+      openTagEditorForActor(sheet.actor);
+    }
+  });
 });
