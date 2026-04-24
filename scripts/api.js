@@ -44,7 +44,7 @@ class TagEditorDialog extends Application {
         lockedTags = getLockedTagsFromActors(this.actors);
     }
     
-    // Unify and Group
+    // Unify and Sort by Type then Name
     const types = game.settings.get("npc-tags", "tagTypes");
     const typeMap = new Map(types.map(t => [t.id, t]));
     
@@ -52,51 +52,24 @@ class TagEditorDialog extends Application {
         name: t,
         isLocked,
         color: getTagColor(t),
-        typeId: getTagType(t)
+        typeId: getTagType(t),
+        typeLabel: (typeMap.get(getTagType(t)) || { label: "Geral" }).label
     });
 
-    const allTags = [
+    const unifiedTags = [
         ...lockedTags.map(t => prepareTag(t, true)),
         ...normalTags.map(t => prepareTag(t, false))
-    ];
-
-    // Group by type
-    const groupsMap = new Map();
-
-    allTags.forEach(tag => {
-        const typeId = tag.typeId || "default";
-        if (!groupsMap.has(typeId)) {
-            const type = typeMap.get(typeId) || { label: "Geral", id: "default", color: null };
-            groupsMap.set(typeId, { 
-                id: typeId, 
-                label: type.label, 
-                color: type.color, 
-                tags: [] 
-            });
-        }
-        groupsMap.get(typeId).tags.push(tag);
-    });
-
-    // Convert to array and sort
-    const groups = Array.from(groupsMap.values()).sort((a, b) => {
-        if (a.id === "default") return 1;
-        if (b.id === "default") return -1;
-        return a.label.localeCompare(b.label);
-    });
-
-    // Sort tags within each group
-    groups.forEach(g => {
-        g.tags.sort((a, b) => {
-            if (a.isLocked && !b.isLocked) return -1;
-            if (!a.isLocked && b.isLocked) return 1;
-            return a.name.localeCompare(b.name);
-        });
+    ].sort((a, b) => {
+        // Sort by Type Label first, then by Name
+        const typeComp = a.typeLabel.localeCompare(b.typeLabel);
+        if (typeComp !== 0) return typeComp;
+        return a.name.localeCompare(b.name);
     });
 
     return {
       multipleActors: multiple,
       actorCount: this.actors.length,
-      groups: groups,
+      tagsList: unifiedTags,
       showAll: this.showAll,
       isSingle: !multiple,
       actorName: multiple ? "" : this.actors[0].name

@@ -35,6 +35,12 @@
 .npc-tags-dialog .window-content {
   padding: 15px;
   background: transparent;
+  overflow: visible !important; /* Crítico para o menu de contexto */
+}
+
+.npc-tags-editor-content {
+  overflow: visible !important;
+  position: relative;
 }
 
 /* Form Groups */
@@ -372,4 +378,9 @@
 
 .tag-type-config-app .add-type-btn:hover {
   background: #27ae60;
+}
+
+/* Context Menu Depth Fix */
+#context-menu {
+    z-index: 9999 !important;
 }
