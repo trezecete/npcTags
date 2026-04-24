@@ -1,0 +1,27 @@
+<form class="npc-tags-type-config-form">
+  <p class="notes">{{localize "npc-tags.settings.tagTypeMenu.hint"}}</p>
+  
+  <div class="types-list">
+    {{#each types}}
+    <div class="type-row" data-type-id="{{this.id}}">
+      <div class="type-fields">
+        <input type="text" name="label.{{this.id}}" value="{{this.label}}" placeholder="Nome do Tipo" />
+        <input type="color" name="color.{{this.id}}" value="{{this.color}}" />
+        {{#if (ne this.id "default")}}
+        <button type="button" class="delete-type" title="Deletar"><i class="fas fa-trash"></i></button>
+        {{else}}
+        <div style="width: 32px;"></div>
+        {{/if}}
+      </div>
+      <div class="type-tags-preview">
+        <small><strong>Tags:</strong> {{#if this.tags}}{{this.tags}}{{else}}Nenhuma{{/if}}</small>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div class="form-footer">
+    <button type="button" class="add-type"><i class="fas fa-plus"></i> Adicionar Tipo</button>
+    <button type="submit" name="submit"><i class="fas fa-save"></i> Salvar Configurações</button>
+  </div>
+</form>

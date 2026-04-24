@@ -189,3 +189,54 @@
   border-radius: 4px;
   border-left: 3px solid var(--npc-tag-accent);
 }
+
+/* Tag Type Config Menu */
+.tag-type-config .type-row {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tag-type-config .type-fields {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tag-type-config .type-fields input[type="text"] {
+  flex: 1;
+}
+
+.tag-type-config .type-fields input[type="color"] {
+  width: 40px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.tag-type-config .type-tags-preview {
+  color: #777;
+  border-top: 1px solid #eee;
+  padding-top: 5px;
+}
+
+.tag-type-config .form-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.tag-type-config .add-type {
+  background: #2ecc71;
+  color: white;
+  border: none;
+}
+
+.tag-type-config .add-type:hover {
+  background: #27ae60;
+}

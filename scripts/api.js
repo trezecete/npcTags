@@ -1,4 +1,4 @@
-import { getTagsFromActors, setTagsOnActors, removeTagFromActor, addTagsToActor, getActorTags } from "./tags.js";
+import { getTagsFromActors, getLockedTagsFromActors, addTagsToActor, removeTagFromActor, setTagsOnActors, getTagColor, setTagType } from "./tags.js";
 
 const TEMPLATE = "modules/npc-tags/templates/tag-editor.hbs";
 
@@ -21,19 +21,16 @@ class TagEditorDialog extends Application {
 
   async getData() {
     const multiple = this.actors.length > 1;
-    const { getTagsFromActors, getLockedTagsFromActors } = await import("./tags.js");
-    
     const normalTags = getTagsFromActors(this.actors);
     const lockedTags = getLockedTagsFromActors(this.actors);
     
     // Unify tags into a single sorted list of objects
-    // Tags that are locked take precedence in styling
     const allTagsMap = new Map();
     
-    lockedTags.forEach(t => allTagsMap.set(t, { name: t, isLocked: true }));
+    lockedTags.forEach(t => allTagsMap.set(t, { name: t, isLocked: true, color: getTagColor(t) }));
     normalTags.forEach(t => {
         if (!allTagsMap.has(t)) {
-            allTagsMap.set(t, { name: t, isLocked: false });
+            allTagsMap.set(t, { name: t, isLocked: false, color: getTagColor(t) });
         }
     });
 
@@ -77,6 +74,38 @@ class TagEditorDialog extends Application {
     html.find(".clear-all-btn").on("click", (event) => {
       this._onClearAll(event);
     });
+
+    // Right-click context menu for tags
+    html.find(".tag").on("contextmenu", (event) => {
+      this._onTagContextMenu(event);
+    });
+  }
+
+  async _onTagContextMenu(event) {
+    event.preventDefault();
+    const tagName = event.currentTarget.dataset.tag;
+    const types = game.settings.get("npc-tags", "tagTypes");
+
+    const menuItems = types.map(type => ({
+      name: type.label,
+      icon: `<i class="fas fa-tag" style="color: ${type.color}"></i>`,
+      callback: async () => {
+        await setTagType(tagName, type.id);
+        this.render();
+      }
+    }));
+
+    // Add option to clear type
+    menuItems.push({
+      name: "Remover Tipo",
+      icon: '<i class="fas fa-eraser"></i>',
+      callback: async () => {
+        await setTagType(tagName, "default");
+        this.render();
+      }
+    });
+
+    new ContextMenu($(event.currentTarget).parent(), ".tag", menuItems).render($(event.currentTarget));
   }
 
   async _onAddTags(event, html) {

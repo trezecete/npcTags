@@ -127,6 +127,40 @@ export function getAllActorTags(actor) {
 }
 
 /**
+ * Retorna a cor de uma tag baseada no seu tipo.
+ */
+export function getTagColor(tagName) {
+  const mapping = game.settings.get("npc-tags", "tagMapping");
+  const typeId = mapping[tagName];
+  if (!typeId) return null;
+
+  const types = game.settings.get("npc-tags", "tagTypes");
+  const type = types.find(t => t.id === typeId);
+  return type ? type.color : null;
+}
+
+/**
+ * Retorna o ID do tipo de uma tag.
+ */
+export function getTagType(tagName) {
+  const mapping = game.settings.get("npc-tags", "tagMapping");
+  return mapping[tagName] || "default";
+}
+
+/**
+ * Define o tipo de uma tag globalmente.
+ */
+export async function setTagType(tagName, typeId) {
+  const mapping = game.settings.get("npc-tags", "tagMapping");
+  if (typeId === "default") {
+    delete mapping[tagName];
+  } else {
+    mapping[tagName] = typeId;
+  }
+  await game.settings.set("npc-tags", "tagMapping", mapping);
+}
+
+/**
  * Retorna todas as tags existentes no mundo.
  */
 export function getAllWorldTags() {

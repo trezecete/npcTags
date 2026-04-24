@@ -18,5 +18,8 @@
   "npc-tags.contextMenu.editTags": "Editar Tags...",
   "npc-tags.sheet.editTags": "Tags",
   "npc-tags.notifications.noTokensSelected": "Nenhum token selecionado. Selecione tokens na cena primeiro.",
-  "npc-tags.notifications.noActorFound": "Nenhum ator encontrado para os tokens selecionados."
+  "npc-tags.notifications.noActorFound": "Nenhum ator encontrado para os tokens selecionados.",
+  "npc-tags.settings.tagTypeMenu.name": "Configurar Tipos de Tags",
+  "npc-tags.settings.tagTypeMenu.label": "Gerenciar Categorias",
+  "npc-tags.settings.tagTypeMenu.hint": "Defina categorias com cores personalizadas. Clique com o botão direito em uma tag no editor para atribuir um tipo."
 }
