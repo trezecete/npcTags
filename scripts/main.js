@@ -1,6 +1,5 @@
 const FLAG_SCOPE = "npc-tags";
 const FLAG_KEY = "tags";
-const TEMPLATE = "modules/npc-tags/templates/tag-editor.hbs";
 
 function normalizeTag(input) {
   return input
@@ -30,13 +29,6 @@ async function setActorTags(actor, tags) {
   }
 }
 
-async function removeTagFromActor(actor, tagToRemove) {
-  const currentTags = getActorTags(actor);
-  const normalized = normalizeTag(tagToRemove);
-  const filtered = currentTags.filter(t => t !== normalized);
-  await setActorTags(actor, filtered);
-}
-
 function getTagsFromActors(actors) {
   const allTags = new Set();
   for (const actor of actors) {
@@ -55,74 +47,81 @@ async function setTagsOnActors(actors, tagsInput) {
   }
 }
 
-class TagEditorDialog extends Dialog {
-  constructor(actors) {
-    const multiple = actors.length > 1;
-    const actorCount = actors.length;
-    const allTags = getTagsFromActors(actors);
-    const tagsValue = allTags.join(" ");
-
-    super({
-      title: multiple 
-        ? game.i18n.format("npc-tags.dialog.titleMultiple", { count: actorCount })
-        : game.i18n.localize("npc-tags.dialog.title"),
-      content: "",
-      buttons: {
-        save: {
-          label: multiple 
-            ? game.i18n.localize("npc-tags.dialog.applyAll")
-            : game.i18n.localize("npc-tags.dialog.save"),
-          icon: '<i class="fas fa-check"></i>',
-          callback: async (html) => {
-            const input = html[0]?.querySelector('input[name="tagsInput"]');
-            const tagsInput = input?.value || "";
-            await setTagsOnActors(actors, tagsInput);
-          }
-        },
-        cancel: {
-          label: game.i18n.localize("npc-tags.dialog.cancel"),
-          icon: '<i class="fas fa-times"></i>'
-        }
-      },
-      defaultButton: "save"
-    });
-
-    this.actors = actors;
-    this.allTags = allTags;
-    this.tagsValue = tagsValue;
+function getTagsHtml(allTags) {
+  if (allTags.length === 0) {
+    return '<p class="no-tags">Nenhuma tag ainda</p>';
   }
-
-  async _renderInner(data) {
-    return renderTemplate(TEMPLATE, {
-      multipleActors: this.actors.length > 1,
-      actorCount: this.actors.length,
-      tagsValue: this.tagsValue,
-      tagsList: this.allTags
-    });
-  }
+  const tags = allTags.map(t => `<span class="tag">${t}</span>`).join("");
+  return `<div class="tags-list">${tags}</div>`;
 }
 
 async function openTagEditor(actors) {
   if (!actors || actors.length === 0) {
-    ui.notifications.warn(game.i18n.localize("npc-tags.notifications.noTokensSelected"));
+    ui.notifications.warn("Selecione tokens na scene primeiro");
     return;
   }
-  const dialog = new TagEditorDialog(actors);
-  dialog.render(true);
+
+  const multiple = actors.length > 1;
+  const currentTags = getTagsFromActors(actors);
+  const tagsDisplay = getTagsHtml(currentTags);
+  
+  const title = multiple 
+    ? `Editar Tags (${actors.length} actors)` 
+    : `Editar Tags: ${actors[0].name}`;
+
+  const d = new Dialog({
+    title: title,
+    content: `
+      <form>
+        <div class="form-group">
+          <label>Tags Atuais (${currentTags.length})</label>
+          ${tagsDisplay}
+        </div>
+        <div class="form-group">
+          <label>Nova Tag</label>
+          <input type="text" name="tags" placeholder="Digite tags separadas por espaco" style="width: 100%;" />
+        </div>
+      </form>
+    `,
+    buttons: {
+      save: {
+        label: "Salvar",
+        icon: '<i class="fas fa-check"></i>',
+        callback: async (html) => {
+          const input = html.find('input[name="tags"]');
+          const tagsValue = input?.val() || "";
+          await setTagsOnActors(actors, tagsValue);
+        }
+      },
+      clear: {
+        label: "Limpar Tags",
+        icon: '<i class="fas fa-trash"></i>',
+        callback: async () => {
+          for (const actor of actors) {
+            await setActorTags(actor, []);
+          }
+        }
+      },
+      cancel: {
+        label: "Cancelar",
+        icon: '<i class="fas fa-times"></i>'
+      }
+    },
+    default: "save"
+  });
+  
+  d.render(true);
 }
 
 async function openTagEditorFromTokens() {
   const controlledTokens = canvas.tokens?.controlled || [];
   if (controlledTokens.length === 0) {
-    ui.notifications.warn(game.i18n.localize("npc-tags.notifications.noTokensSelected"));
+    ui.notifications.warn("Nenhum token selecionado");
     return;
   }
-  const actors = [];
-  for (const token of controlledTokens) {
-    if (token.actor) actors.push(token.actor);
-  }
+  const actors = controlledTokens.map(t => t.actor).filter(a => a);
   if (actors.length === 0) {
-    ui.notifications.warn(game.i18n.localize("npc-tags.notifications.noActorFound"));
+    ui.notifications.warn("Nenhum actor encontrado");
     return;
   }
   await openTagEditor(actors);
@@ -135,13 +134,10 @@ async function openTagEditorForActor(actor) {
 console.log("NPC Tags: Loading...");
 
 Hooks.on("init", () => {
-  const moduleData = game.modules.get("npc-tags");
-  if (moduleData) {
-    moduleData.api = {
-      openTagEditor: openTagEditorFromTokens,
-      openTagEditorForActor: openTagEditorForActor
-    };
-  }
+  game.modules.get("npc-tags").api = {
+    openTagEditor: openTagEditorFromTokens,
+    openTagEditorForActor: openTagEditorForActor
+  };
   
   game.npcTags = {
     openTagEditorFromTokens,
@@ -152,17 +148,9 @@ Hooks.on("init", () => {
 
   Hooks.on("ActorsDirectoryContextMenu", (html, actors) => {
     actors.push({
-      name: game.i18n.localize("npc-tags.contextMenu.editTags"),
+      name: "Editar Tags...",
       icon: '<i class="fas fa-tag"></i>',
       callback: (actor) => openTagEditorForActor(actor)
-    });
-  });
-
-  Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
-    buttons.push({
-      label: game.i18n.localize("npc-tags.sheet.editTags"),
-      icon: "fas fa-tag",
-      onclick: () => openTagEditorForActor(sheet.actor)
     });
   });
 });
