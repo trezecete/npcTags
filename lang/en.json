@@ -1,0 +1,17 @@
+{
+  "npc-tags.dialog.title": "Edit Tags",
+  "npc-tags.dialog.titleMultiple": "Edit Tags ({count} actors)",
+  "npc-tags.dialog.tagsLabel": "Add Tags",
+  "npc-tags.dialog.placeholder": "Enter tags separated by space",
+  "npc-tags.dialog.currentTags": "Current Tags",
+  "npc-tags.dialog.noTags": "No tags yet",
+  "npc-tags.dialog.removeTag": "Remove tag",
+  "npc-tags.dialog.save": "Save",
+  "npc-tags.dialog.applyAll": "Apply to All",
+  "npc-tags.dialog.cancel": "Cancel",
+  "npc-tags.dialog.multipleSelected": "{count} actors selected",
+  "npc-tags.contextMenu.editTags": "Edit Tags...",
+  "npc-tags.sheet.editTags": "Tags",
+  "npc-tags.notifications.noTokensSelected": "No tokens selected. Select tokens on the scene first.",
+  "npc-tags.notifications.noActorFound": "No actor found for selected tokens."
+}

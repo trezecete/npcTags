@@ -1,0 +1,24 @@
+<div class="form-group">
+  {{#if multipleActors}}
+  <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
+  {{/if}}
+  
+  <label>{{ localize "npc-tags.dialog.tagsLabel" }}</label>
+  <input type="text" name="tagsInput" value="{{tagsValue}}" placeholder="{{ localize "npc-tags.dialog.placeholder" }}" />
+  
+  <div class="existing-tags">
+    <label>{{ localize "npc-tags.dialog.currentTags" }} ({{ tagsList.length }})</label>
+    {{#if tagsList}}
+    <div class="tags-container">
+      {{#each tagsList}}
+      <span class="tag" data-tag="{{this}}">
+        <span class="tag-text">{{this}}</span>
+        <span class="tag-remove" title="{{ localize "npc-tags.dialog.removeTag" }}">&times;</span>
+      </span>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="no-tags">{{ localize "npc-tags.dialog.noTags" }}</p>
+    {{/if}}
+  </div>
+</div>
