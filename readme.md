@@ -15,7 +15,7 @@ Módulo para Foundry VTT v13+ que permite adicionar palavras-chave (tags) aos ac
 
 Crie uma macro com o seguinte código:
 ```javascript
-await openNPCTagsEditor();
+await game.modules.get("npc-tags")?.api?.openTagEditor();
 ```
 
 Coloque a macro na barra de macros. Ao executar, selecione tokens na scene primeiro - o sistema detectará os actors vinculados.

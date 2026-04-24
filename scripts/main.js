@@ -149,8 +149,13 @@ async function openTagEditorForActor(actor) {
 
 console.log("NPC Tags: Loading...");
 
-globalThis.openNPCTagsEditor = openTagEditorFromTokens;
-globalThis.npcTagsEditTags = openTagEditorForActor;
+const moduleData = game.modules.get("npc-tags");
+if (moduleData) {
+  moduleData.api = {
+    openTagEditor: openTagEditorFromTokens,
+    openTagEditorForActor: openTagEditorForActor
+  };
+}
 
 game.npcTags = {
   openTagEditorAPI: openTagEditorFromTokens,
