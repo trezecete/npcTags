@@ -29,6 +29,6 @@
     "scripts/main.js"
   ],
   "url": "https://github.com/trezecete/npcTags",
-  "manifest": "https://raw.githubusercontent.com/trezecete/npcTags/master/module.json",
-  "download": "https://github.com/trezecete/npcTags/archive/refs/heads/master.zip"
+  "manifest": "https://github.com/trezecete/npcTags/releases/latest/download/module.json",
+  "download": "https://github.com/trezecete/npcTags/releases/latest/download/npcTags.zip"
 }
