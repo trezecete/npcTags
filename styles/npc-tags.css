@@ -216,11 +216,52 @@
     padding-bottom: 4px;
 }
 
-/* Multi-select Toggle */
-.header-actions {
+/* Header Layout */
+.editor-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 10px;
+    gap: 10px;
+}
+
+.header-info {
+    flex: 1;
+}
+
+/* Save Destination Toggle */
+.save-dest-toggle {
+    margin-top: -10px;
+    margin-bottom: 5px;
+}
+
+.toggle-save-dest {
+    background: none;
+    border: none;
+    padding: 2px 8px;
+    font-size: 0.65rem;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    background: rgba(0,0,0,0.03);
+}
+
+.toggle-save-dest:hover {
+    background: rgba(0,0,0,0.08);
+    color: #444;
+}
+
+.toggle-save-dest.to-actor {
+    background: rgba(211, 84, 0, 0.1);
+    color: #d35400;
+}
+
+.toggle-save-dest i {
+    font-size: 0.75rem;
 }
 
 .toggle-show-all {

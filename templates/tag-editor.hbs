@@ -1,14 +1,28 @@
 <div class="npc-tags-editor-content">
   <div class="editor-header">
+    <div class="header-info">
+      {{#if multipleActors}}
+      <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
+      {{else}}
+      <p class="notes">{{actorName}}</p>
+      {{/if}}
+      
+      {{#if hasUnlinked}}
+      <div class="save-dest-toggle">
+          <button class="toggle-save-dest {{#if saveToActor}}to-actor{{/if}}" title="{{#if saveToActor}}Salvando na Ficha Base{{else}}Salvando apenas neste Token{{/if}}">
+              <i class="fas {{#if saveToActor}}fa-user-edit{{else}}fa-id-badge{{/if}}"></i>
+              <span>{{#if saveToActor}}Ficha Base{{else}}Este Token{{/if}}</span>
+          </button>
+      </div>
+      {{/if}}
+    </div>
+
     {{#if multipleActors}}
-    <p class="notes">{{ localize "npc-tags.dialog.multipleSelected" count=actorCount }}</p>
     <div class="header-actions">
         <button class="toggle-show-all {{#if showAll}}active{{/if}}" title="{{#if showAll}}Mostrar apenas tags em comum{{else}}Mostrar todas as tags{{/if}}">
             <i class="fas fa-layer-group"></i> {{#if showAll}}Tags Individuais{{else}}Apenas Comum{{/if}}
         </button>
     </div>
-    {{else}}
-    <p class="notes">{{actorName}}</p>
     {{/if}}
   </div>
 
@@ -42,5 +56,4 @@
       {{/unless}}
     </div>
   </div>
-
 </div>

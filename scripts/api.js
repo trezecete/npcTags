@@ -7,6 +7,7 @@ class TagEditorDialog extends Application {
     super(options);
     this.actors = actors;
     this.showAll = false; // Toggle state for multi-select
+    this.saveToActor = false; // Toggle for unlinked tokens: save to Token or Base Actor
   }
 
   static get defaultOptions() {
@@ -72,11 +73,16 @@ class TagEditorDialog extends Application {
         return a.name.localeCompare(b.name);
     });
 
+    // Detect unlinked actors
+    const hasUnlinked = this.actors.some(a => a.isToken);
+
     return {
       multipleActors: multiple,
       actorCount: this.actors.length,
       tagsList: unifiedTags,
       showAll: this.showAll,
+      saveToActor: this.saveToActor,
+      hasUnlinked: hasUnlinked,
       isSingle: !multiple,
       actorName: multiple ? "" : this.actors[0].name
     };
@@ -106,6 +112,12 @@ class TagEditorDialog extends Application {
     // Toggle Show All
     html.find(".toggle-show-all").on("click", (event) => {
         this.showAll = !this.showAll;
+        this.render();
+    });
+
+    // Toggle Save Destination (Unlinked tokens)
+    html.find(".toggle-save-dest").on("click", (event) => {
+        this.saveToActor = !this.saveToActor;
         this.render();
     });
 
@@ -148,7 +160,8 @@ class TagEditorDialog extends Application {
     if (!value) return;
 
     for (const actor of this.actors) {
-      await addTagsToActor(actor, value);
+      const target = (this.saveToActor && actor.isToken) ? game.actors.get(actor.id) : actor;
+      if (target) await addTagsToActor(target, value);
     }
 
     input.val("");
@@ -158,7 +171,8 @@ class TagEditorDialog extends Application {
   async _onRemoveTag(event) {
     const tag = event.currentTarget.closest(".tag").dataset.tag;
     for (const actor of this.actors) {
-      await removeTagFromActor(actor, tag);
+      const target = (this.saveToActor && actor.isToken) ? game.actors.get(actor.id) : actor;
+      if (target) await removeTagFromActor(target, tag);
     }
     this.render();
   }
