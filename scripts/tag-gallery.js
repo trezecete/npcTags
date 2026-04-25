@@ -92,11 +92,28 @@ export class TagGalleryApp extends Application {
         this.render();
     });
 
-    // Abrir Actor no duplo clique
+    // Abrir Actor no duplo clique (Botão Esquerdo)
     html.find(".actor-card").dblclick(event => {
         const actorId = event.currentTarget.dataset.actorId;
         const actor = game.actors.get(actorId);
         if (actor) actor.sheet.render(true);
+    });
+
+    // Abrir Editor de Tags no duplo clique (Botão Direito)
+    let lastRightClick = 0;
+    html.find(".actor-card").on("contextmenu", (event) => {
+        event.preventDefault();
+        const now = Date.now();
+        const actorId = event.currentTarget.dataset.actorId;
+        const actor = game.actors.get(actorId);
+
+        if (now - lastRightClick < 500) {
+            // É um duplo clique do botão direito
+            if (actor) game.npcTags.openTagEditorForActor(actor);
+            lastRightClick = 0;
+        } else {
+            lastRightClick = now;
+        }
     });
   }
 
