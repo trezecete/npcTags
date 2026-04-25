@@ -1,0 +1,47 @@
+<div class="npc-tags-gallery-content">
+  <div class="gallery-sidebar">
+    <div class="search-section">
+        <label><i class="fas fa-search"></i> Pesquisar por Tags</label>
+        <p class="notes" style="font-size: 0.7rem;">Cada campo é um grupo (AND). O resultado final é a união dos grupos (OR).</p>
+        
+        <div class="search-groups">
+            {{#each groups}}
+            <div class="search-group-row">
+                <input type="text" class="search-input" data-index="{{this.index}}" value="{{this.value}}" placeholder="ex: forte careca" />
+                {{#if (gt ../groups.length 1)}}
+                <button type="button" class="remove-group-btn" data-index="{{this.index}}" title="Remover Grupo">&times;</button>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+
+        <button type="button" class="add-group-btn">
+            <i class="fas fa-plus"></i> Novo Grupo de Busca
+        </button>
+    </div>
+    
+    <div class="gallery-stats">
+        <span>Encontrados: <strong>{{actors.length}}</strong> atores</span>
+    </div>
+  </div>
+
+  <div class="gallery-main">
+    <div class="actors-grid">
+      {{#each actors}}
+      <div class="actor-card" data-actor-id="{{this.id}}" title="{{this.name}}">
+        <div class="actor-image" style="background-image: url('{{this.img}}');"></div>
+        <div class="actor-info">
+          <span class="actor-name">{{this.name}}</span>
+        </div>
+      </div>
+      {{/each}}
+      
+      {{#unless actors}}
+      <div class="no-results">
+        <i class="fas fa-ghost"></i>
+        <p>Nenhum ator encontrado com estas tags.</p>
+      </div>
+      {{/unless}}
+    </div>
+  </div>
+</div>

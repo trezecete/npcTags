@@ -1,6 +1,7 @@
 import { registerHooks } from "./hooks.js";
 import { openTagEditorFromTokens, openTagEditorForActor } from "./api.js";
 import { TagTypeConfig } from "./tag-type-config.js";
+import { TagGalleryApp } from "./tag-gallery.js";
 
 Hooks.once("init", () => {
   console.log("NPC Tags | Initializing...");
@@ -43,7 +44,8 @@ Hooks.once("setup", () => {
   const api = {
     openTagEditorFromTokens,
     openTagEditorForActor,
-    TagTypeConfig
+    TagTypeConfig,
+    TagGalleryApp
   };
 
   game.modules.get("npc-tags").api = api;
