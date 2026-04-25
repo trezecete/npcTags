@@ -16,8 +16,8 @@ export function registerHooks() {
 
   // Add button to Actor Sheet header
   Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => {
-    buttons.push({
-      label: "npc-tags.sheet.editTags",
+    buttons.unshift({
+      label: "",
       class: "edit-npc-tags",
       icon: "fas fa-tag",
       onclick: () => openTagEditorForActor(sheet.actor)

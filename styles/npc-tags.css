@@ -242,23 +242,28 @@
 
 /* Tag Type Config Menu */
 .tag-type-config-app.npc-tags-dialog .window-content {
-  overflow: hidden !important; /* Voltar ao normal para permitir scroll interno */
+  overflow: hidden !important; 
   display: flex;
   flex-direction: column;
+  height: 600px; /* Garantir altura fixa para o flex interno */
 }
 
 .npc-tags-type-config-form {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: 70vh; /* Limitar altura */
+}
+
+.tag-type-config-app .notes {
+  flex: 0 0 auto; /* Não crescer nem encolher */
+  margin-bottom: 10px;
 }
 
 .types-list {
-  flex: 1;
+  flex: 1 1 auto; /* Ocupar o resto do espaço e ser rolável */
   overflow-y: auto;
-  padding-right: 5px;
-  margin-bottom: 10px;
+  padding-right: 8px;
+  margin-bottom: 15px;
 }
 
 .tag-type-config-app .type-row {
