@@ -7,7 +7,6 @@ class TagEditorDialog extends Application {
     super(options);
     this.actors = actors;
     this.showAll = false; // Toggle state for multi-select
-    this.saveToActor = false; // Toggle for unlinked tokens: save to Token or Base Actor
   }
 
   static get defaultOptions() {
@@ -73,16 +72,11 @@ class TagEditorDialog extends Application {
         return a.name.localeCompare(b.name);
     });
 
-    // Detect unlinked actors
-    const hasUnlinked = this.actors.some(a => a.isToken);
-
     return {
       multipleActors: multiple,
       actorCount: this.actors.length,
       tagsList: unifiedTags,
       showAll: this.showAll,
-      saveToActor: this.saveToActor,
-      hasUnlinked: hasUnlinked,
       isSingle: !multiple,
       actorName: multiple ? "" : this.actors[0].name
     };
@@ -112,12 +106,6 @@ class TagEditorDialog extends Application {
     // Toggle Show All
     html.find(".toggle-show-all").on("click", (event) => {
         this.showAll = !this.showAll;
-        this.render();
-    });
-
-    // Toggle Save Destination (Unlinked tokens)
-    html.find(".toggle-save-dest").on("click", (event) => {
-        this.saveToActor = !this.saveToActor;
         this.render();
     });
 
@@ -160,8 +148,7 @@ class TagEditorDialog extends Application {
     if (!value) return;
 
     for (const actor of this.actors) {
-      const target = (this.saveToActor && actor.isToken) ? game.actors.get(actor.id) : actor;
-      if (target) await addTagsToActor(target, value);
+      await addTagsToActor(actor, value);
     }
 
     input.val("");
@@ -171,8 +158,7 @@ class TagEditorDialog extends Application {
   async _onRemoveTag(event) {
     const tag = event.currentTarget.closest(".tag").dataset.tag;
     for (const actor of this.actors) {
-      const target = (this.saveToActor && actor.isToken) ? game.actors.get(actor.id) : actor;
-      if (target) await removeTagFromActor(target, tag);
+      await removeTagFromActor(actor, tag);
     }
     this.render();
   }
@@ -184,7 +170,23 @@ async function openTagEditor(actors) {
     return;
   }
 
-  const dialog = new TagEditorDialog(actors);
+  // Se o actor não for linked, pegamos o Actor base (da barra lateral)
+  const processedActors = actors.map(actor => {
+      // Verifica se é um token unlinked (synthetic actor)
+      if (actor.isToken || (actor.prototypeToken && !actor.prototypeToken.link)) {
+          const baseActor = game.actors.get(actor.id);
+          if (baseActor) {
+              console.log(`NPC Tags | Redirecionando tag de token unlinked para o Actor base: ${baseActor.name}`);
+              return baseActor;
+          }
+      }
+      return actor;
+  });
+
+  // Remove duplicados (caso vários tokens do mesmo actor base unlinked sejam selecionados)
+  const uniqueActors = Array.from(new Set(processedActors));
+
+  const dialog = new TagEditorDialog(uniqueActors);
   dialog.render(true);
 }
 
