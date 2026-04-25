@@ -15,14 +15,15 @@ export function registerHooks() {
   });
 
   // Add Gallery button to Actor Directory
-  Hooks.on("getActorDirectoryHeaderButtons", (app, buttons) => {
+  Hooks.on("getDirectoryHeaderButtons", (app, buttons) => {
+    if (!(app instanceof ActorDirectory)) return;
+    
     buttons.unshift({
       label: "Galeria de Tags",
       class: "npc-tags-gallery-btn",
       icon: "fas fa-th-large",
       onclick: () => {
-        const { TagGalleryApp } = game.modules.get("npc-tags").api;
-        new TagGalleryApp().render(true);
+        new game.npcTags.TagGalleryApp().render(true);
       }
     });
   });
