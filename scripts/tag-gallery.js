@@ -20,6 +20,7 @@ export class TagGalleryApp extends Application {
     });
   }
 
+  async getData() {
     // Realiza a busca
     this.results = searchActors(this.searchGroups);
 
