@@ -2,14 +2,22 @@
   <div class="gallery-sidebar">
     <div class="search-section">
         <label><i class="fas fa-search"></i> Pesquisar por Tags</label>
-        <p class="notes" style="font-size: 0.7rem;">Cada campo é um grupo (AND). O resultado final é a união dos grupos (OR).</p>
+        <p class="notes" style="font-size: 0.7rem;">Espaço ou Enter para criar etiquetas. Cada campo é um grupo (AND). O resultado final é a união dos grupos (OR).</p>
         
         <div class="search-groups">
             {{#each groups}}
-            <div class="search-group-row">
-                <input type="text" class="search-input" data-index="{{this.index}}" value="{{this.value}}" placeholder="ex: forte careca" />
+            <div class="search-group-container">
+                <div class="search-group-pills">
+                    {{#each this.tags}}
+                    <span class="search-tag-pill">
+                        {{this}}
+                        <i class="fas fa-times remove-search-tag" data-group-index="{{../this.index}}" data-tag="{{this}}"></i>
+                    </span>
+                    {{/each}}
+                    <input type="text" class="search-input" data-index="{{this.index}}" placeholder="{{#unless this.tags}}ex: forte careca{{/unless}}" />
+                </div>
                 {{#if (gt ../groups.length 1)}}
-                <button type="button" class="remove-group-btn" data-index="{{this.index}}" title="Remover Grupo">&times;</button>
+                <button type="button" class="remove-group-btn absolute" data-index="{{this.index}}" title="Remover Grupo">&times;</button>
                 {{/if}}
             </div>
             {{/each}}

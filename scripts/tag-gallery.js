@@ -3,8 +3,9 @@ import { searchActors } from "./gallery-logic.js";
 export class TagGalleryApp extends Application {
   constructor(options = {}) {
     super(options);
-    this.searchGroups = [[""]]; // Inicializa com um grupo vazio
+    this.searchGroups = [[]]; // Cada grupo é um array de strings (tags)
     this.results = [];
+    this.focusedGroupIndex = null;
   }
 
   static get defaultOptions() {
@@ -19,12 +20,14 @@ export class TagGalleryApp extends Application {
     });
   }
 
-  async getData() {
-    // Se não houver busca, mostra tudo (limitado por performance se necessário, mas Foundry aguenta bem algumas centenas)
+    // Realiza a busca
     this.results = searchActors(this.searchGroups);
 
     return {
-      groups: this.searchGroups.map((g, i) => ({ index: i, value: g.join(" ") })),
+      groups: this.searchGroups.map((tags, i) => ({ 
+          index: i, 
+          tags: tags 
+      })),
       actors: this.results.map(a => ({
         id: a.id,
         name: a.name,
@@ -36,24 +39,55 @@ export class TagGalleryApp extends Application {
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Busca ao digitar (debounce simples)
-    html.find(".search-input").on("input", (event) => {
-        const index = event.currentTarget.dataset.index;
-        this.searchGroups[index] = event.currentTarget.value.split(/\s+/).filter(t => t);
-        this._debouncedRefresh();
+    // Re-focar no input correto após o render
+    if (this.focusedGroupIndex !== null) {
+        html.find(`.search-input[data-index="${this.focusedGroupIndex}"]`).focus();
+    }
+
+    // Adicionar tag ao grupo via Espaço ou Enter
+    html.find(".search-input").on("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+            event.preventDefault();
+            const val = event.currentTarget.value.trim();
+            if (val) {
+                const index = event.currentTarget.dataset.index;
+                if (!this.searchGroups[index].includes(val)) {
+                    this.searchGroups[index].push(val);
+                    this.focusedGroupIndex = index;
+                    this.render();
+                }
+                event.currentTarget.value = "";
+            }
+        }
+    });
+
+    // Guardar qual input está sendo usado
+    html.find(".search-input").on("focus", (event) => {
+        this.focusedGroupIndex = event.currentTarget.dataset.index;
+    });
+
+    // Remover tag individual de um grupo
+    html.find(".remove-search-tag").click((event) => {
+        const groupIndex = event.currentTarget.dataset.groupIndex;
+        const tag = event.currentTarget.dataset.tag;
+        this.searchGroups[groupIndex] = this.searchGroups[groupIndex].filter(t => t !== tag);
+        this.focusedGroupIndex = groupIndex;
+        this.render();
     });
 
     // Adicionar novo grupo de busca
     html.find(".add-group-btn").click(() => {
-        this.searchGroups.push([""]);
+        this.searchGroups.push([]);
+        this.focusedGroupIndex = this.searchGroups.length - 1;
         this.render();
     });
 
-    // Remover grupo de busca
+    // Remover grupo de busca inteiro
     html.find(".remove-group-btn").click((event) => {
         const index = event.currentTarget.dataset.index;
         this.searchGroups.splice(index, 1);
-        if (this.searchGroups.length === 0) this.searchGroups = [[""]];
+        if (this.searchGroups.length === 0) this.searchGroups = [[]];
+        this.focusedGroupIndex = null;
         this.render();
     });
 
